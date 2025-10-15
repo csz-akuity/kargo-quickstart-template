@@ -1,0 +1,16 @@
+---
+# Kargo Project - Each team manages their own Kargo manifests
+# This file lives in: github.com/csz-akuity/kargo-quickstart-template (main branch)
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Project
+metadata:
+  name: kargo-quickstart-template
+  namespace: kargo-quickstart-template
+spec:
+  promotionPolicies:
+    - stage: dev
+      autoPromotionEnabled: true
+    - stage: staging
+      autoPromotionEnabled: true
+    - stage: prod
+      autoPromotionEnabled: false

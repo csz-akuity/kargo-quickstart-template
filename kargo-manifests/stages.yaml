@@ -1,0 +1,146 @@
+---
+# Dev stage - auto-promotes from warehouse
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: dev
+  namespace: kargo-quickstart-template
+spec:
+  # Request Freight directly from the warehouse
+  requestedFreight:
+    - origin:
+        kind: Warehouse
+        name: kargo-quickstart-template
+      sources:
+        direct: true
+  
+  # Promotion template - how to promote Freight to this stage
+  promotionTemplate:
+    spec:
+      steps:
+        - uses: git-clone
+          config:
+            repoURL: https://github.com/csz-akuity/kargo-quickstart-template.git
+            checkout:
+              - branch: main
+                path: ./src
+        - uses: kustomize-set-image
+          as: update-image
+          config:
+            path: ./src/app/env/dev
+            images:
+              - image: public.ecr.aws/nginx/nginx
+                tag: ${{ imageFrom('public.ecr.aws/nginx/nginx').Tag }}
+        - uses: kustomize-build
+          config:
+            path: ./src/app/env/dev
+            outPath: ./src/build
+        - uses: git-commit
+          config:
+            path: ./src
+            message: "Update nginx image for dev stage"
+        - uses: git-push
+          config:
+            path: ./src
+
+---
+# Staging stage - requires manual promotion from dev
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: staging
+  namespace: kargo-quickstart-template
+spec:
+  # Request Freight from dev stage
+  requestedFreight:
+    - origin:
+        kind: Warehouse
+        name: kargo-quickstart-template
+      sources:
+        stages:
+          - dev
+  
+  # Promotion template
+  promotionTemplate:
+    spec:
+      steps:
+        - uses: git-clone
+          config:
+            repoURL: https://github.com/csz-akuity/kargo-quickstart-template.git
+            checkout:
+              - branch: main
+                path: ./src
+        - uses: kustomize-set-image
+          as: update-image
+          config:
+            path: ./src/app/env/staging
+            images:
+              - image: public.ecr.aws/nginx/nginx
+                tag: ${{ imageFrom('public.ecr.aws/nginx/nginx').Tag }}
+        - uses: kustomize-build
+          config:
+            path: ./src/app/env/staging
+            outPath: ./src/build
+        - uses: git-commit
+          config:
+            path: ./src
+            message: "Update nginx image for staging stage"
+        - uses: git-push
+          config:
+            path: ./src
+  
+  # Simple verification
+  verification:
+    analysisTemplates:
+      - name: verify-deployment-health
+
+---
+# Production stage - requires manual promotion from staging
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Stage
+metadata:
+  name: prod
+  namespace: kargo-quickstart-template
+spec:
+  # Request Freight from staging stage
+  requestedFreight:
+    - origin:
+        kind: Warehouse
+        name: kargo-quickstart-template
+      sources:
+        stages:
+          - staging
+  
+  # Promotion template
+  promotionTemplate:
+    spec:
+      steps:
+        - uses: git-clone
+          config:
+            repoURL: https://github.com/csz-akuity/kargo-quickstart-template.git
+            checkout:
+              - branch: main
+                path: ./src
+        - uses: kustomize-set-image
+          as: update-image
+          config:
+            path: ./src/app/env/prod
+            images:
+              - image: public.ecr.aws/nginx/nginx
+                tag: ${{ imageFrom('public.ecr.aws/nginx/nginx').Tag }}
+        - uses: kustomize-build
+          config:
+            path: ./src/app/env/prod
+            outPath: ./src/build
+        - uses: git-commit
+          config:
+            path: ./src
+            message: "Update nginx image for prod stage"
+        - uses: git-push
+          config:
+            path: ./src
+  
+  # Verification before considering promotion successful
+  verification:
+    analysisTemplates:
+      - name: verify-deployment-health
