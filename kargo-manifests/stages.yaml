@@ -6,46 +6,59 @@ metadata:
   name: dev
   namespace: kargo-quickstart-template
 spec:
-  # Request Freight directly from the warehouse
   requestedFreight:
-    - origin:
-        kind: Warehouse
-        name: kargo-quickstart-template
-      sources:
-        direct: true
-  
-  # Promotion template - how to promote Freight to this stage
+  - origin:
+      kind: Warehouse
+      name: kargo-quickstart-template
+    sources:
+      direct: true
   promotionTemplate:
     spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/csz-ghorg/kargo-quickstart-template.git
+      - name: imageRepo
+        value: public.ecr.aws/nginx/nginx
       steps:
-        - uses: git-clone
-          config:
-            repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
-            credentials:
-              name: git-credentials
-            checkout:
-              - branch: main
-                path: ./src
-        - uses: kustomize-set-image
-          as: update-image
-          config:
-            path: ./src/app/env/dev
-            images:
-              - image: public.ecr.aws/nginx/nginx
-                tag: ${{ imageFrom('public.ecr.aws/nginx/nginx').Tag }}
-        - uses: kustomize-build
-          config:
-            path: ./src/app/env/dev
-            outPath: ./src/build
-        - uses: git-commit
-          config:
+      - uses: git-clone
+        config:
+          repoURL: ${{ vars.gitRepo }}
+          checkout:
+          - branch: main
             path: ./src
-            message: "Update nginx image for dev stage"
-        - uses: git-push
-          config:
-            path: ./src
-            credentials:
-              name: git-credentials
+          - branch: env/dev
+            create: true
+            path: ./out
+      - uses: git-clear
+        config:
+          path: ./out
+      - uses: kustomize-set-image
+        as: update-image
+        config:
+          path: ./src/app/env/dev
+          images:
+          - image: ${{ vars.imageRepo }}
+            tag: ${{ imageFrom(vars.imageRepo).Tag }}
+      - uses: kustomize-build
+        config:
+          path: ./src/app/env/dev
+          outPath: ./out/manifests.yaml
+      - uses: git-commit
+        as: commit
+        config:
+          path: ./out
+          message: ${{ outputs['update-image'].commitMessage }}
+      - uses: git-push
+        config:
+          path: ./out
+          targetBranch: env/dev
+      - uses: argocd-update
+        config:
+          apps:
+          - name: guestbook-simple-dev
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.commit.commit }}
 
 ---
 # Staging stage - requires manual promotion from dev
@@ -55,48 +68,61 @@ metadata:
   name: staging
   namespace: kargo-quickstart-template
 spec:
-  # Request Freight from dev stage
   requestedFreight:
-    - origin:
-        kind: Warehouse
-        name: kargo-quickstart-template
-      sources:
-        stages:
-          - dev
-  
-  # Promotion template
+  - origin:
+      kind: Warehouse
+      name: kargo-quickstart-template
+    sources:
+      stages:
+      - dev
   promotionTemplate:
     spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/csz-ghorg/kargo-quickstart-template.git
+      - name: imageRepo
+        value: public.ecr.aws/nginx/nginx
       steps:
-        - uses: git-clone
-          config:
-            repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
-            credentials:
-              name: git-credentials
-            checkout:
-              - branch: main
-                path: ./src
-        - uses: kustomize-set-image
-          as: update-image
-          config:
-            path: ./src/app/env/staging
-            images:
-              - image: public.ecr.aws/nginx/nginx
-                tag: ${{ imageFrom('public.ecr.aws/nginx/nginx').Tag }}
-        - uses: kustomize-build
-          config:
-            path: ./src/app/env/staging
-            outPath: ./src/build
-        - uses: git-commit
-          config:
+      - uses: git-clone
+        config:
+          repoURL: ${{ vars.gitRepo }}
+          checkout:
+          - branch: main
             path: ./src
-            message: "Update nginx image for staging stage"
-        - uses: git-push
-          config:
-            path: ./src
-            credentials:
-              name: git-credentials
-  
+          - branch: env/staging
+            create: true
+            path: ./out
+      - uses: git-clear
+        config:
+          path: ./out
+      - uses: kustomize-set-image
+        as: update-image
+        config:
+          path: ./src/app/env/staging
+          images:
+          - image: ${{ vars.imageRepo }}
+            tag: ${{ imageFrom(vars.imageRepo).Tag }}
+      - uses: kustomize-build
+        config:
+          path: ./src/app/env/staging
+          outPath: ./out/manifests.yaml
+      - uses: git-commit
+        as: commit
+        config:
+          path: ./out
+          message: ${{ outputs['update-image'].commitMessage }}
+      - uses: git-push
+        config:
+          path: ./out
+          targetBranch: env/staging
+      - uses: argocd-update
+        config:
+          apps:
+          - name: guestbook-simple-staging
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.commit.commit }}
+
   # Simple verification
   verification:
     analysisTemplates:
@@ -110,48 +136,61 @@ metadata:
   name: prod
   namespace: kargo-quickstart-template
 spec:
-  # Request Freight from staging stage
   requestedFreight:
-    - origin:
-        kind: Warehouse
-        name: kargo-quickstart-template
-      sources:
-        stages:
-          - staging
-  
-  # Promotion template
+  - origin:
+      kind: Warehouse
+      name: kargo-quickstart-template
+    sources:
+      stages:
+      - staging
   promotionTemplate:
     spec:
+      vars:
+      - name: gitRepo
+        value: https://github.com/csz-ghorg/kargo-quickstart-template.git
+      - name: imageRepo
+        value: public.ecr.aws/nginx/nginx
       steps:
-        - uses: git-clone
-          config:
-            repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
-            credentials:
-              name: git-credentials
-            checkout:
-              - branch: main
-                path: ./src
-        - uses: kustomize-set-image
-          as: update-image
-          config:
-            path: ./src/app/env/prod
-            images:
-              - image: public.ecr.aws/nginx/nginx
-                tag: ${{ imageFrom('public.ecr.aws/nginx/nginx').Tag }}
-        - uses: kustomize-build
-          config:
-            path: ./src/app/env/prod
-            outPath: ./src/build
-        - uses: git-commit
-          config:
+      - uses: git-clone
+        config:
+          repoURL: ${{ vars.gitRepo }}
+          checkout:
+          - branch: main
             path: ./src
-            message: "Update nginx image for prod stage"
-        - uses: git-push
-          config:
-            path: ./src
-            credentials:
-              name: git-credentials
-  
+          - branch: env/prod
+            create: true
+            path: ./out
+      - uses: git-clear
+        config:
+          path: ./out
+      - uses: kustomize-set-image
+        as: update-image
+        config:
+          path: ./src/app/env/prod
+          images:
+          - image: ${{ vars.imageRepo }}
+            tag: ${{ imageFrom(vars.imageRepo).Tag }}
+      - uses: kustomize-build
+        config:
+          path: ./src/app/env/prod
+          outPath: ./out/manifests.yaml
+      - uses: git-commit
+        as: commit
+        config:
+          path: ./out
+          message: ${{ outputs['update-image'].commitMessage }}
+      - uses: git-push
+        config:
+          path: ./out
+          targetBranch: env/prod
+      - uses: argocd-update
+        config:
+          apps:
+          - name: guestbook-simple-prod
+            sources:
+            - repoURL: ${{ vars.gitRepo }}
+              desiredRevision: ${{ outputs.commit.commit }}
+
   # Verification before considering promotion successful
   verification:
     analysisTemplates:

@@ -6,16 +6,14 @@ metadata:
   name: kargo-quickstart-template
   namespace: kargo-quickstart-template
 spec:
-  interval: 5m0s
-  
   subscriptions:
-    # Watch container images - using AWS ECR public registry to avoid Docker Hub rate limits
-    - image:
-        repoURL: public.ecr.aws/nginx/nginx
-        semverConstraint: ^1.24
-        discoveryLimit: 5
-        
-    # Watch Git repo for config changes
-    - git:
-        repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
-        branch: main
+  # Watch container images - using AWS ECR public registry to avoid Docker Hub rate limits
+  - image:
+      repoURL: public.ecr.aws/nginx/nginx
+      semverConstraint: ^1.24
+      discoveryLimit: 5
+      
+  # Watch Git repo for config changes
+  - git:
+      repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
+      branch: main

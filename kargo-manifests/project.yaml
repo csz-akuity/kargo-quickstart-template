@@ -17,7 +17,7 @@ spec:
       autoPromotionEnabled: false
       # Require approval for production promotions
       enableAutoPromotion: false
-  
+
   # Security settings
   securityContext:
     # Require authentication for all operations
