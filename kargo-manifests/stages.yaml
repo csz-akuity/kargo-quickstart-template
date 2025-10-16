@@ -5,8 +5,6 @@ kind: Stage
 metadata:
   name: dev
   namespace: kargo-quickstart-template
-  labels:
-    kargo.akuity.io/shard: self-hosted
 spec:
   requestedFreight:
   - origin:
@@ -20,7 +18,7 @@ spec:
       - name: gitRepo
         value: https://github.com/csz-ghorg/kargo-quickstart-template.git
       - name: imageRepo
-        value: public.ecr.aws/nginx/nginx
+        value: ghcr.io/csz-akuity/guestbook
       steps:
       - uses: git-clone
         config:
@@ -67,8 +65,6 @@ kind: Stage
 metadata:
   name: staging
   namespace: kargo-quickstart-template
-  labels:
-    kargo.akuity.io/shard: self-hosted
 spec:
   requestedFreight:
   - origin:
@@ -83,7 +79,7 @@ spec:
       - name: gitRepo
         value: https://github.com/csz-ghorg/kargo-quickstart-template.git
       - name: imageRepo
-        value: public.ecr.aws/nginx/nginx
+        value: ghcr.io/csz-akuity/guestbook
       steps:
       - uses: git-clone
         config:
@@ -130,8 +126,6 @@ kind: Stage
 metadata:
   name: prod
   namespace: kargo-quickstart-template
-  labels:
-    kargo.akuity.io/shard: self-hosted
 spec:
   requestedFreight:
   - origin:
@@ -146,7 +140,7 @@ spec:
       - name: gitRepo
         value: https://github.com/csz-ghorg/kargo-quickstart-template.git
       - name: imageRepo
-        value: public.ecr.aws/nginx/nginx
+        value: ghcr.io/csz-akuity/guestbook
       steps:
       - uses: git-clone
         config:
