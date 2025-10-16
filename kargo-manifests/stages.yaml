@@ -55,7 +55,7 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: guestbook-simple-dev
+          - name: kargo-quickstart-template-main
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
@@ -118,7 +118,7 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: guestbook-simple-staging
+          - name: kargo-quickstart-template-main
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
@@ -186,7 +186,7 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: guestbook-simple-prod
+          - name: kargo-quickstart-template-main
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
