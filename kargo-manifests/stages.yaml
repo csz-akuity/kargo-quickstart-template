@@ -4,7 +4,7 @@ apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
   name: dev
-  namespace: kargo-quickstart-template
+  namespace: default
 spec:
   requestedFreight:
   - origin:
@@ -66,7 +66,7 @@ apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
   name: staging
-  namespace: kargo-quickstart-template
+  namespace: default
 spec:
   requestedFreight:
   - origin:
@@ -134,7 +134,7 @@ apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
   name: prod
-  namespace: kargo-quickstart-template
+  namespace: default
 spec:
   requestedFreight:
   - origin:
