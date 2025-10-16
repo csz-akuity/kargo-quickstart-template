@@ -1,0 +1,171 @@
+---
+# Kargo RBAC Configuration using ServiceAccount mappings with OIDC claims
+# Based on: https://docs.kargo.io/user-guide/security/access-controls/
+# Note: kargo-admin and kargo-viewer roles are automatically created by Kargo
+
+# Admin ServiceAccount - Maps to users with admin@example.com email or kargo-admin group
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin
+  namespace: kargo-quickstart-template
+  annotations:
+    kargo.akuity.io/description: "Admin access for project management"
+    rbac.kargo.akuity.io/claim.email: admin@example.com
+    rbac.kargo.akuity.io/claim.groups: kargo-admin
+
+---
+# RoleBinding for admin ServiceAccount to kargo-admin role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: admin
+  namespace: kargo-quickstart-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kargo-admin
+subjects:
+- kind: ServiceAccount
+  name: admin
+  namespace: kargo-quickstart-template
+
+---
+# Team Alpha Developer ServiceAccount - Scoped to team-alpha group
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: team-alpha-dev
+  namespace: kargo-quickstart-template
+  annotations:
+    kargo.akuity.io/description: "Team Alpha developer access - can promote to dev only"
+    rbac.kargo.akuity.io/claim.groups: team-alpha
+    rbac.kargo.akuity.io/claim.email: team-alpha-dev1@example.com,team-alpha-dev2@example.com
+
+---
+# Custom Role for Team Alpha developers 
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: team-alpha-dev
+  namespace: kargo-quickstart-template
+rules:
+# Can only promote freight to dev stage
+- apiGroups:
+  - kargo.akuity.io
+  resources:
+  - promotions
+  verbs:
+  - create
+  - patch
+  - update
+- apiGroups:
+  - kargo.akuity.io
+  resources:
+  - stages
+  verbs:
+  - promote
+  resourceNames:
+  - dev  # Only dev stage for team-alpha
+
+---
+# RoleBinding for team-alpha-dev ServiceAccount to custom role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: team-alpha-dev
+  namespace: kargo-quickstart-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: team-alpha-dev
+subjects:
+- kind: ServiceAccount
+  name: team-alpha-dev
+  namespace: kargo-quickstart-template
+
+---
+# RoleBinding for team-alpha-dev ServiceAccount to kargo-viewer role (read access)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: team-alpha-dev-viewer
+  namespace: kargo-quickstart-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kargo-viewer
+subjects:
+- kind: ServiceAccount
+  name: team-alpha-dev
+  namespace: kargo-quickstart-template
+
+---
+# ReadOnly ServiceAccount
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: readonly
+  namespace: kargo-quickstart-template
+  annotations:
+    kargo.akuity.io/description: "Read-only access"
+    rbac.kargo.akuity.io/claim.groups: qa-team
+    rbac.kargo.akuity.io/claim.email: qa-engineer@example.com,product-manager@example.com
+
+---
+# RoleBinding for readonly ServiceAccount to kargo-viewer role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: readonly
+  namespace: kargo-quickstart-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kargo-viewer
+subjects:
+- kind: ServiceAccount
+  name: readonly
+  namespace: kargo-quickstart-template
+
+---
+# CI/CD ServiceAccount for automated systems
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kargo-ci-cd
+  namespace: kargo-quickstart-template
+  annotations:
+    kargo.akuity.io/description: "Service account for CI/CD systems to interact with Kargo"
+
+---
+# RoleBinding for CI/CD ServiceAccount to developer role
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cicd-developer
+  namespace: kargo-quickstart-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: developer
+subjects:
+- kind: ServiceAccount
+  name: kargo-ci-cd
+  namespace: kargo-quickstart-template
+
+---
+# RoleBinding for CI/CD ServiceAccount to kargo-viewer role (read access)
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: cicd-viewer
+  namespace: kargo-quickstart-template
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: kargo-viewer
+subjects:
+- kind: ServiceAccount
+  name: kargo-ci-cd
+  namespace: kargo-quickstart-template

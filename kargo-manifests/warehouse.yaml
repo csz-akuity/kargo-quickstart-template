@@ -17,5 +17,5 @@ spec:
         
     # Watch Git repo for config changes
     - git:
-        repoURL: https://github.com/csz-akuity/kargo-quickstart-template.git
+        repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
         branch: main

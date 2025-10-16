@@ -1,6 +1,5 @@
 ---
 # Simple verification job - checks if deployment is healthy
-# No GCP dependencies, just uses built-in kubectl
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
