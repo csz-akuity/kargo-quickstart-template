@@ -5,6 +5,8 @@ kind: Warehouse
 metadata:
   name: kargo-quickstart-template
   namespace: kargo-quickstart-template
+  labels:
+    kargo.akuity.io/shard: self-hosted
 spec:
   subscriptions:
   # Watch container images - using AWS ECR public registry to avoid Docker Hub rate limits

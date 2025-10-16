@@ -5,6 +5,8 @@ kind: Stage
 metadata:
   name: dev
   namespace: kargo-quickstart-template
+  labels:
+    kargo.akuity.io/shard: self-hosted
 spec:
   requestedFreight:
   - origin:
@@ -65,6 +67,8 @@ kind: Stage
 metadata:
   name: staging
   namespace: kargo-quickstart-template
+  labels:
+    kargo.akuity.io/shard: self-hosted
 spec:
   requestedFreight:
   - origin:
@@ -126,6 +130,8 @@ kind: Stage
 metadata:
   name: prod
   namespace: kargo-quickstart-template
+  labels:
+    kargo.akuity.io/shard: self-hosted
 spec:
   requestedFreight:
   - origin:
