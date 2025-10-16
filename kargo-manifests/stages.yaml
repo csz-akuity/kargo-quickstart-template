@@ -55,7 +55,7 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: kargo-quickstart-template-main
+          - name: kargo-quickstart-template
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
@@ -118,7 +118,7 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: kargo-quickstart-template-main
+          - name: kargo-quickstart-template
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
@@ -186,7 +186,7 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: kargo-quickstart-template-main
+          - name: kargo-quickstart-template
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
