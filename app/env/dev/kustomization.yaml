@@ -4,7 +4,7 @@ kind: Kustomization
 resources:
 - ../../base
 
-namespace: guestbook-simple-dev
+namespace: kargo-quickstart-template-dev
 
 images:
 - name: ghcr.io/csz-akuity/guestbook
