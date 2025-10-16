@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: guestbook-simple-dev
+  name: kargo-quickstart-template-dev
 ---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: guestbook-simple
-  namespace: guestbook-simple-dev
+  namespace: kargo-quickstart-template-dev
 spec:
   replicas: 1
   revisionHistoryLimit: 3
@@ -30,7 +30,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: guestbook-simple
-  namespace: guestbook-simple-dev
+  namespace: kargo-quickstart-template-dev
 spec:
   ports:
   - name: http
