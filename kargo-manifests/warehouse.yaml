@@ -4,7 +4,7 @@ apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
   name: kargo-quickstart-template
-  namespace: default
+  namespace: kargo-quickstart-template
 spec:
   subscriptions:
   # Watch container images - using AWS ECR public registry to avoid Docker Hub rate limits

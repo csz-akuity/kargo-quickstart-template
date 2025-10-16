@@ -4,7 +4,7 @@ apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:
   name: verify-deployment-health
-  namespace: default
+  namespace: kargo-quickstart-template
 spec:
   metrics:
     - name: check-deployment-ready
