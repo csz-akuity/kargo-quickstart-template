@@ -1,0 +1,140 @@
+---
+# Kargo RBAC Configuration
+# This file defines roles and bindings for the kargo-quickstart-template project
+
+---
+# Admin role - full access to all stages and promotions
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectRole
+metadata:
+  name: admin
+  namespace: kargo-quickstart-template
+spec:
+  # Admin has full access to all stages
+  stages:
+    - "*"
+  # Admin can perform all actions
+  actions:
+    - "*"
+
+---
+# Developer role - can promote to dev and staging
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectRole
+metadata:
+  name: developer
+  namespace: kargo-quickstart-template
+spec:
+  # Developers can access dev and staging stages
+  stages:
+    - "dev"
+    - "staging"
+  # Developers can promote and view
+  actions:
+    - "promote"
+    - "view"
+
+---
+# Viewer role - read-only access
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectRole
+metadata:
+  name: viewer
+  namespace: kargo-quickstart-template
+spec:
+  # Viewers can access all stages
+  stages:
+    - "*"
+  # Viewers can only view
+  actions:
+    - "view"
+
+---
+# ServiceAccount for admin user
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: admin
+  namespace: kargo-quickstart-template
+  annotations:
+    # Map to OIDC claims for SSO integration
+    rbac.kargo.akuity.io/claim.email: "admin@example.com"
+    rbac.kargo.akuity.io/claim.groups: "admin"
+
+---
+# ServiceAccount for developers
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: developer
+  namespace: kargo-quickstart-template
+  annotations:
+    # Map to OIDC claims for SSO integration
+    rbac.kargo.akuity.io/claim.email: "developer@example.com"
+    rbac.kargo.akuity.io/claim.groups: "developers"
+
+---
+# ServiceAccount for viewers
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: viewer
+  namespace: kargo-quickstart-template
+  annotations:
+    # Map to OIDC claims for SSO integration
+    rbac.kargo.akuity.io/claim.email: "viewer@example.com"
+    rbac.kargo.akuity.io/claim.groups: "viewers"
+
+---
+# ProjectRoleBinding for admin
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectRoleBinding
+metadata:
+  name: admin-binding
+  namespace: kargo-quickstart-template
+spec:
+  # Bind admin role to admin ServiceAccount
+  subjects:
+    - kind: ServiceAccount
+      name: admin
+      namespace: kargo-quickstart-template
+  # Reference the admin role
+  roleRef:
+    kind: ProjectRole
+    name: admin
+
+---
+# ProjectRoleBinding for developers
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectRoleBinding
+metadata:
+  name: developer-binding
+  namespace: kargo-quickstart-template
+spec:
+  # Bind developer role to developer ServiceAccount
+  subjects:
+    - kind: ServiceAccount
+      name: developer
+      namespace: kargo-quickstart-template
+  # Reference the developer role
+  roleRef:
+    kind: ProjectRole
+    name: developer
+
+---
+# ProjectRoleBinding for viewers
+apiVersion: kargo.akuity.io/v1alpha1
+kind: ProjectRoleBinding
+metadata:
+  name: viewer-binding
+  namespace: kargo-quickstart-template
+spec:
+  # Bind viewer role to viewer ServiceAccount
+  subjects:
+    - kind: ServiceAccount
+      name: viewer
+      namespace: kargo-quickstart-template
+  # Reference the viewer role
+  roleRef:
+    kind: ProjectRole
+    name: viewer
