@@ -52,13 +52,11 @@ spec:
         config:
           path: ./out
           targetBranch: env/dev
-      - uses: argocd-update
-        config:
-          apps:
-          - name: kargo-quickstart-template-dev
-            sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.commit.commit }}
+
+  # Argo CD integration
+  promotionMechanisms:
+    argoCDAppUpdates:
+      - appName: kargo-quickstart-template-dev
 
 ---
 # Staging stage - requires manual promotion from dev
@@ -115,13 +113,11 @@ spec:
         config:
           path: ./out
           targetBranch: env/staging
-      - uses: argocd-update
-        config:
-          apps:
-          - name: kargo-quickstart-template-staging
-            sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.commit.commit }}
+
+  # Argo CD integration
+  promotionMechanisms:
+    argoCDAppUpdates:
+      - appName: kargo-quickstart-template-staging
 
 ---
 # Production stage - requires manual promotion from staging
@@ -178,10 +174,8 @@ spec:
         config:
           path: ./out
           targetBranch: env/prod
-      - uses: argocd-update
-        config:
-          apps:
-          - name: kargo-quickstart-template-prod
-            sources:
-            - repoURL: ${{ vars.gitRepo }}
-              desiredRevision: ${{ outputs.commit.commit }}
+
+  # Argo CD integration
+  promotionMechanisms:
+    argoCDAppUpdates:
+      - appName: kargo-quickstart-template-prod
