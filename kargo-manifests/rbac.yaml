@@ -4,50 +4,57 @@
 
 ---
 # Admin role - full access to all stages and promotions
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
   name: admin
   namespace: kargo-quickstart-template
-spec:
-  # Admin has full access to all stages
-  stages:
-    - "*"
-  # Admin can perform all actions
-  actions:
-    - "*"
+rules:
+- apiGroups: ["kargo.akuity.io"]
+  resources: ["stages", "promotions", "freights", "warehouses"]
+  verbs: ["*"]
+- apiGroups: ["argoproj.io"]
+  resources: ["analysisruns", "analysistemplates"]
+  verbs: ["*"]
+- apiGroups: [""]
+  resources: ["secrets", "serviceaccounts", "events"]
+  verbs: ["*"]
 
 ---
 # Developer role - can promote to dev and staging
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
   name: developer
   namespace: kargo-quickstart-template
-spec:
-  # Developers can access dev and staging stages
-  stages:
-    - "dev"
-    - "staging"
-  # Developers can promote and view
-  actions:
-    - "promote"
-    - "view"
+rules:
+- apiGroups: ["kargo.akuity.io"]
+  resources: ["stages", "promotions", "freights"]
+  verbs: ["get", "list", "watch", "promote"]
+- apiGroups: ["argoproj.io"]
+  resources: ["analysisruns", "analysistemplates"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get", "list", "watch"]
 
 ---
 # Viewer role - read-only access
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectRole
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
 metadata:
   name: viewer
   namespace: kargo-quickstart-template
-spec:
-  # Viewers can access all stages
-  stages:
-    - "*"
-  # Viewers can only view
-  actions:
-    - "view"
+rules:
+- apiGroups: ["kargo.akuity.io"]
+  resources: ["stages", "promotions", "freights", "warehouses"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["argoproj.io"]
+  resources: ["analysisruns", "analysistemplates"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources: ["events"]
+  verbs: ["get", "list", "watch"]
 
 ---
 # ServiceAccount for admin user
@@ -86,55 +93,49 @@ metadata:
     rbac.kargo.akuity.io/claim.groups: "viewers"
 
 ---
-# ProjectRoleBinding for admin
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectRoleBinding
+# RoleBinding for admin
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
   name: admin-binding
   namespace: kargo-quickstart-template
-spec:
-  # Bind admin role to admin ServiceAccount
-  subjects:
-    - kind: ServiceAccount
-      name: admin
-      namespace: kargo-quickstart-template
-  # Reference the admin role
-  roleRef:
-    kind: ProjectRole
-    name: admin
+subjects:
+- kind: ServiceAccount
+  name: admin
+  namespace: kargo-quickstart-template
+roleRef:
+  kind: Role
+  name: admin
+  apiGroup: rbac.authorization.k8s.io
 
 ---
-# ProjectRoleBinding for developers
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectRoleBinding
+# RoleBinding for developers
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
   name: developer-binding
   namespace: kargo-quickstart-template
-spec:
-  # Bind developer role to developer ServiceAccount
-  subjects:
-    - kind: ServiceAccount
-      name: developer
-      namespace: kargo-quickstart-template
-  # Reference the developer role
-  roleRef:
-    kind: ProjectRole
-    name: developer
+subjects:
+- kind: ServiceAccount
+  name: developer
+  namespace: kargo-quickstart-template
+roleRef:
+  kind: Role
+  name: developer
+  apiGroup: rbac.authorization.k8s.io
 
 ---
-# ProjectRoleBinding for viewers
-apiVersion: kargo.akuity.io/v1alpha1
-kind: ProjectRoleBinding
+# RoleBinding for viewers
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
 metadata:
   name: viewer-binding
   namespace: kargo-quickstart-template
-spec:
-  # Bind viewer role to viewer ServiceAccount
-  subjects:
-    - kind: ServiceAccount
-      name: viewer
-      namespace: kargo-quickstart-template
-  # Reference the viewer role
-  roleRef:
-    kind: ProjectRole
-    name: viewer
+subjects:
+- kind: ServiceAccount
+  name: viewer
+  namespace: kargo-quickstart-template
+roleRef:
+  kind: Role
+  name: viewer
+  apiGroup: rbac.authorization.k8s.io
