@@ -8,15 +8,15 @@ metadata:
   namespace: kargo-quickstart-template
 spec:
   # Promotion policies with RBAC considerations
-  promotionPolicies:
-    - stage: dev
-      autoPromotionEnabled: true
-    - stage: staging
-      autoPromotionEnabled: true
-    - stage: prod
-      autoPromotionEnabled: false
-      # Require approval for production promotions
-      enableAutoPromotion: false
+  # promotionPolicies:
+  #   - stage: dev
+  #     autoPromotionEnabled: true
+  #   - stage: staging
+  #     autoPromotionEnabled: true
+  #   - stage: prod
+  #     autoPromotionEnabled: false
+  #     # Require approval for production promotions
+  #     enableAutoPromotion: false
 
   # Security settings
   securityContext:
