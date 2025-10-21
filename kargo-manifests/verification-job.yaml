@@ -1,5 +1,5 @@
 ---
-# Simple verification job - checks if deployment is healthy
+# Base verification job - Generic template
 apiVersion: argoproj.io/v1alpha1
 kind: AnalysisTemplate
 metadata:

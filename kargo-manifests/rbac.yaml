@@ -1,16 +1,10 @@
 ---
-# Kargo RBAC Configuration - Team Alpha specific
-# This file defines roles and bindings for the kargo-quickstart-template-team-alpha project
-
----
-# Admin role - full access to all stages and promotions
+# Base Kargo RBAC Configuration - Generic template
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: admin
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
 rules:
 - apiGroups: ["kargo.akuity.io"]
   resources: ["stages", "promotions", "freights", "warehouses"]
@@ -23,14 +17,11 @@ rules:
   verbs: ["*"]
 
 ---
-# Developer role - can promote to dev and staging
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: developer
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
 rules:
 - apiGroups: ["kargo.akuity.io"]
   resources: ["stages", "promotions", "freights"]
@@ -43,14 +34,11 @@ rules:
   verbs: ["get", "list", "watch"]
 
 ---
-# Viewer role - read-only access
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: viewer
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
 rules:
 - apiGroups: ["kargo.akuity.io"]
   resources: ["stages", "promotions", "freights", "warehouses"]
@@ -63,96 +51,75 @@ rules:
   verbs: ["get", "list", "watch"]
 
 ---
-# ServiceAccount for admin user
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: admin
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
   annotations:
-    # Map to OIDC claims for SSO integration
     rbac.kargo.akuity.io/claim.email: "admin@example.com"
     rbac.kargo.akuity.io/claim.groups: "admin"
 
 ---
-# ServiceAccount for developers
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: developer
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
   annotations:
-    # Map to OIDC claims for SSO integration
     rbac.kargo.akuity.io/claim.email: "developer@example.com"
     rbac.kargo.akuity.io/claim.groups: "developers"
 
 ---
-# ServiceAccount for viewers
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: viewer
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
   annotations:
-    # Map to OIDC claims for SSO integration
     rbac.kargo.akuity.io/claim.email: "viewer@example.com"
     rbac.kargo.akuity.io/claim.groups: "viewers"
 
 ---
-# RoleBinding for admin
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: admin-binding
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
 subjects:
 - kind: ServiceAccount
   name: admin
-  namespace: kargo-quickstart-template-team-alpha
+  namespace: kargo-quickstart-template
 roleRef:
   kind: Role
   name: admin
   apiGroup: rbac.authorization.k8s.io
 
 ---
-# RoleBinding for developers
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: developer-binding
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
 subjects:
 - kind: ServiceAccount
   name: developer
-  namespace: kargo-quickstart-template-team-alpha
+  namespace: kargo-quickstart-template
 roleRef:
   kind: Role
   name: developer
   apiGroup: rbac.authorization.k8s.io
 
 ---
-# RoleBinding for viewers
 apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: viewer-binding
-  namespace: kargo-quickstart-template-team-alpha
-  labels:
-    team: alpha
+  namespace: kargo-quickstart-template
 subjects:
 - kind: ServiceAccount
   name: viewer
-  namespace: kargo-quickstart-template-team-alpha
+  namespace: kargo-quickstart-template
 roleRef:
   kind: Role
   name: viewer
