@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guestbook-config
+  labels:
+    team: beta
+    environment: development
+data:
+  app.properties: |
+    team.name=Team Beta
+    app.theme=green
+    feature.performance-mode.enabled=true
+    feature.caching.enabled=true
+    feature.monitoring.enabled=true
+    ui.title=Team Beta Guestbook
+    ui.welcome-message=Welcome to Team Beta's High-Performance Guestbook!
+    ui.color-scheme=green
+    performance.cache-size=1000
+    performance.timeout=30s
+  config.json: |
+    {
+      "team": "beta",
+      "environment": "development",
+      "features": {
+        "performanceMode": true,
+        "caching": true,
+        "monitoring": true,
+        "healthChecks": true
+      },
+      "ui": {
+        "title": "Team Beta Guestbook",
+        "theme": "green",
+        "welcomeMessage": "Welcome to Team Beta's High-Performance Guestbook!"
+      },
+      "performance": {
+        "cacheSize": 1000,
+        "timeout": "30s",
+        "maxConnections": 100
+      }
+    }

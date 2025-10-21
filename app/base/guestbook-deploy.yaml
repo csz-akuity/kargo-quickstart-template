@@ -2,16 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: guestbook-simple
+  labels:
+    team: beta
+    environment: development
 spec:
-  replicas: 1
-  revisionHistoryLimit: 3
+  replicas: 3
+  revisionHistoryLimit: 5
   selector:
     matchLabels:
       app: guestbook-simple
+      team: beta
   template:
     metadata:
       labels:
         app: guestbook-simple
+        team: beta
+        environment: development
     spec:
       containers:
       - image: ghcr.io/csz-akuity/guestbook:v0.0.1
@@ -19,3 +25,31 @@ spec:
         ports:
         - name: http
           containerPort: 3000
+        env:
+        - name: TEAM_NAME
+          value: "Team Beta"
+        - name: APP_THEME
+          value: "green"
+        - name: FEATURE_FLAG_PERFORMANCE_MODE
+          value: "true"
+        - name: FEATURE_FLAG_CACHING
+          value: "enabled"
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "200m"
+          limits:
+            memory: "512Mi"
+            cpu: "500m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: http
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /ready
+            port: http
+          initialDelaySeconds: 5
+          periodSeconds: 5

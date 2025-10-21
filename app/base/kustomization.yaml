@@ -7,3 +7,8 @@ resources:
 - guestbook-ns.yaml
 - guestbook-deploy.yaml
 - guestbook-svc.yaml
+- guestbook-config.yaml
+
+commonLabels:
+  team: beta
+  environment: development
