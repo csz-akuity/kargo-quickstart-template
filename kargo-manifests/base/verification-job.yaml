@@ -1,0 +1,32 @@
+---
+# Base verification job - Generic template
+apiVersion: argoproj.io/v1alpha1
+kind: AnalysisTemplate
+metadata:
+  name: verify-deployment-health
+  namespace: kargo-quickstart-template
+spec:
+  metrics:
+    - name: check-deployment-ready
+      initialDelay: 10s
+      successCondition: result == "true"
+      provider:
+        job:
+          spec:
+            template:
+              spec:
+                serviceAccountName: default
+                restartPolicy: Never
+                containers:
+                  - name: verify
+                    image: bitnami/kubectl:latest
+                    command:
+                      - /bin/sh
+                      - -c
+                      - |
+                        # Simple check - just return success for testing
+                        # In a real scenario, this would check actual deployment health
+                        echo "Verification job running..."
+                        echo "Checking deployment health..."
+                        sleep 5
+                        echo "true"

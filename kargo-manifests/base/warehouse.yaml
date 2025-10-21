@@ -1,0 +1,19 @@
+---
+# Base Warehouse - Generic template
+apiVersion: kargo.akuity.io/v1alpha1
+kind: Warehouse
+metadata:
+  name: kargo-quickstart-template
+  namespace: kargo-quickstart-template
+spec:
+  subscriptions:
+  # Watch container images 
+  - image:
+      repoURL: ghcr.io/csz-akuity/guestbook
+      semverConstraint: ^0.0
+      discoveryLimit: 5
+      
+  # Watch Git repo for config changes
+  - git:
+      repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
+      branch: main

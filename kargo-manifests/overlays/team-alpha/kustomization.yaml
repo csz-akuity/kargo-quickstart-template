@@ -1,0 +1,37 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: kargo-quickstart-template-team-alpha
+namePrefix: kargo-quickstart-template-team-alpha-
+
+resources:
+- ../base
+
+patchesStrategicMerge:
+- |-
+  apiVersion: kargo.akuity.io/v1alpha1
+  kind: Project
+  metadata:
+    name: kargo-quickstart-template-team-alpha
+  spec: {}
+
+patches:
+- target:
+    kind: Warehouse
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: kargo-quickstart-template-team-alpha
+    - op: replace
+      path: /spec/subscriptions/1/git/branch
+      value: team-alpha-dev
+
+- target:
+    kind: AnalysisTemplate
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: verify-deployment-health-team-alpha
+
+commonLabels:
+  team: alpha
