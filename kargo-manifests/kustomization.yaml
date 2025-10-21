@@ -1,11 +1,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-# Team-specific namespace - this will be overridden by each team's branch
+# Team-specific namespace
 namespace: kargo-quickstart-template-team-alpha
-
-# Add team prefix to all resource names
-namePrefix: kargo-quickstart-template-team-alpha-
 
 resources:
 - project.yaml
@@ -14,7 +11,7 @@ resources:
 - stages.yaml
 - rbac.yaml
 
-# Transform all resources to use team-specific namespace
+# Transform specific resources that need custom naming
 patches:
 - target:
     kind: Project
