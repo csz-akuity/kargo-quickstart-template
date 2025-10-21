@@ -1,10 +1,12 @@
 ---
-# Warehouse for kargo-quickstart-template
+# Warehouse for kargo-quickstart-template - Team Beta specific
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Warehouse
 metadata:
-  name: kargo-quickstart-template
-  namespace: kargo-quickstart-template
+  name: kargo-quickstart-template-team-beta
+  namespace: kargo-quickstart-template-team-beta
+  labels:
+    team: beta
 spec:
   subscriptions:
   # Watch container images 
@@ -16,4 +18,4 @@ spec:
   # Watch Git repo for config changes
   - git:
       repoURL: https://github.com/csz-ghorg/kargo-quickstart-template.git
-      branch: main
+      branch: team-beta-dev
