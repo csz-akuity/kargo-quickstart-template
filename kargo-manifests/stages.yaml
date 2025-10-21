@@ -1,15 +1,17 @@
 ---
-# Dev stage - auto-promotes from warehouse
+# Dev stage - Team Alpha specific
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
   name: dev
-  namespace: kargo-quickstart-template
+  namespace: kargo-quickstart-template-team-alpha
+  labels:
+    team: alpha
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: kargo-quickstart-template
+      name: kargo-quickstart-template-team-alpha
     sources:
       direct: true
   promotionTemplate:
@@ -24,7 +26,7 @@ spec:
         config:
           repoURL: ${{ vars.gitRepo }}
           checkout:
-          - branch: main
+          - branch: team-alpha-dev
             path: ./src
           - branch: env/dev
             create: true
@@ -55,23 +57,24 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: kargo-quickstart-template-dev
+          - name: kargo-quickstart-template-dev-team-alpha
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
-
 ---
-# Staging stage - requires manual promotion from dev
+# Staging stage - Team Alpha specific
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
   name: staging
-  namespace: kargo-quickstart-template
+  namespace: kargo-quickstart-template-team-alpha
+  labels:
+    team: alpha
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: kargo-quickstart-template
+      name: kargo-quickstart-template-team-alpha
     sources:
       stages:
       - dev
@@ -87,7 +90,7 @@ spec:
         config:
           repoURL: ${{ vars.gitRepo }}
           checkout:
-          - branch: main
+          - branch: team-alpha-dev
             path: ./src
           - branch: env/staging
             create: true
@@ -118,23 +121,24 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: kargo-quickstart-template-staging
+          - name: kargo-quickstart-template-staging-team-alpha
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
-
 ---
-# Production stage - requires manual promotion from staging
+# Production stage - Team Alpha specific
 apiVersion: kargo.akuity.io/v1alpha1
 kind: Stage
 metadata:
   name: prod
-  namespace: kargo-quickstart-template
+  namespace: kargo-quickstart-template-team-alpha
+  labels:
+    team: alpha
 spec:
   requestedFreight:
   - origin:
       kind: Warehouse
-      name: kargo-quickstart-template
+      name: kargo-quickstart-template-team-alpha
     sources:
       stages:
       - staging
@@ -150,7 +154,7 @@ spec:
         config:
           repoURL: ${{ vars.gitRepo }}
           checkout:
-          - branch: main
+          - branch: team-alpha-dev
             path: ./src
           - branch: env/prod
             create: true
@@ -181,7 +185,7 @@ spec:
       - uses: argocd-update
         config:
           apps:
-          - name: kargo-quickstart-template-prod
+          - name: kargo-quickstart-template-prod-team-alpha
             sources:
             - repoURL: ${{ vars.gitRepo }}
               desiredRevision: ${{ outputs.commit.commit }}
