@@ -1,0 +1,54 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# Team-specific namespace - this will be overridden by each team's branch
+namespace: kargo-quickstart-template-team-beta
+
+# Add team prefix to all resource names
+namePrefix: kargo-quickstart-template-team-beta-
+
+resources:
+- project.yaml
+- warehouse.yaml
+- verification-job.yaml
+- stages.yaml
+- rbac.yaml
+
+# Transform all resources to use team-specific namespace
+patches:
+- target:
+    kind: Project
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: kargo-quickstart-template-team-beta
+
+- target:
+    kind: Warehouse
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: kargo-quickstart-template-team-beta
+    - op: replace
+      path: /spec/subscriptions/1/git/branch
+      value: team-beta-dev
+
+- target:
+    kind: AnalysisTemplate
+  patch: |-
+    - op: replace
+      path: /metadata/name
+      value: verify-deployment-health-team-beta
+
+- target:
+    kind: Stage
+  patch: |-
+    - op: replace
+      path: /spec/requestedFreight/0/origin/name
+      value: kargo-quickstart-template-team-beta
+    - op: replace
+      path: /spec/promotionTemplate/spec/steps/0/config/checkout/0/branch
+      value: team-beta-dev
+
+commonLabels:
+  team: beta
