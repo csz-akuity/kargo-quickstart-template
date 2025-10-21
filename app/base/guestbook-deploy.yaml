@@ -2,16 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: guestbook-simple
+  labels:
+    team: alpha
+    environment: development
 spec:
-  replicas: 1
+  replicas: 2
   revisionHistoryLimit: 3
   selector:
     matchLabels:
       app: guestbook-simple
+      team: alpha
   template:
     metadata:
       labels:
         app: guestbook-simple
+        team: alpha
+        environment: development
     spec:
       containers:
       - image: ghcr.io/csz-akuity/guestbook:v0.0.1
@@ -19,3 +25,17 @@ spec:
         ports:
         - name: http
           containerPort: 3000
+        env:
+        - name: TEAM_NAME
+          value: "Team Alpha"
+        - name: APP_THEME
+          value: "blue"
+        - name: FEATURE_FLAG_ADVANCED_UI
+          value: "true"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "200m"

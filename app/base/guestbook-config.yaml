@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: guestbook-config
+  labels:
+    team: alpha
+    environment: development
+data:
+  app.properties: |
+    team.name=Team Alpha
+    app.theme=blue
+    feature.advanced-ui.enabled=true
+    feature.analytics.enabled=true
+    feature.notifications.enabled=true
+    ui.title=Team Alpha Guestbook
+    ui.welcome-message=Welcome to Team Alpha's Guestbook!
+    ui.color-scheme=blue
+  config.json: |
+    {
+      "team": "alpha",
+      "environment": "development",
+      "features": {
+        "advancedUI": true,
+        "analytics": true,
+        "notifications": true,
+        "darkMode": false
+      },
+      "ui": {
+        "title": "Team Alpha Guestbook",
+        "theme": "blue",
+        "welcomeMessage": "Welcome to Team Alpha's Guestbook!"
+      }
+    }
